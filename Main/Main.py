@@ -1,8 +1,6 @@
 import pandas as pd
-import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-import os
 file_path1 = "/Data/Sleep_Efficiency.csv"
 
 def open_file(file_path: str):
@@ -35,7 +33,7 @@ def distribution(df:pd.DataFrame):
     df = df.dropna()
     sns.kdeplot(data=df,x='Sleep efficiency',fill=True).set_title('Sleep efficiency', fontsize=20)
     plt.xlabel('Sleep Efficiency', fontsize=12)
-    plt.ylabel('Count', fontsize=12)
+    plt.ylabel('Density', fontsize=12)
     plt.show()
 
 def percentage(df:pd.DataFrame):
@@ -84,29 +82,34 @@ def graph_caffeine_influence_awakenings(df:pd.DataFrame):
     plt.ylabel('Awakenings(number)', fontsize=12)
     plt.show()
 
-
-class User:
-    def __init__(self, name, age, total_sleep, total_minutes_in_bed,smoking_status,exercise):
-        self.name = name
-        self.age = age
-        self.total_sleep = total_sleep
-        self.total_minutes_in_bed = total_minutes_in_bed
-        self.smoking_status = smoking_status
-        self.exercise = exercise
-
-    def sleep_efficiency_calculator(self):
-        return self.total_sleep/self.total_minutes_in_bed*100
-
+def age_distribution_sleep_efficiency1(df: pd.DataFrame):
+    df = df.dropna()
+    sns.set_theme(style="whitegrid")
+    plt.figure(figsize=(12, 8))
+    sns.barplot(
+        data=df.head(20),
+        x='Sleep efficiency',
+        y='Age',
+        hue='Exercise frequency',
+        orient='h'
+    )
+    plt.xlabel('Sleep Efficiency', fontsize=12)
+    plt.ylabel('Age', fontsize=12)
+    plt.title('Age vs Sleep Efficiency and Exercise Frequency', fontsize=16)
+    plt.grid(axis='both', alpha=0.7)
+    sns.despine(left=True, bottom=True)
+    plt.tight_layout()
+    plt.show()
 
 if __name__ == '__main__':
     file_path = "../Data/Sleep_Efficiency.csv"
     data = open_file(file_path)
-    #print(data)
-    show_table(data)
+    # print(data)
+    # show_table(data)
     #distribution(data)
-    #percentage(data)
-    graph_caffeine_influence_awakenings(data)
-   # age_distribution_sleep_efficiency(data)
-    # age_distribution_sleep_efficiency_scatter(data)
-    #graph_smoking_influence_sleep_efficiency(data)
-    #graph_exercise_frequency_sleep_efficiency(data)
+    # percentage(data)
+    # graph_caffeine_influence_awakenings(data)
+    age_distribution_sleep_efficiency1(data)
+   # age_distribution_sleep_efficiency_scatter(data)
+   #  graph_smoking_influence_sleep_efficiency(data)
+

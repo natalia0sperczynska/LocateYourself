@@ -1,3 +1,4 @@
+import pandas
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -83,13 +84,14 @@ def graph_caffeine_influence_awakenings(df:pd.DataFrame):
     plt.show()
 
 def age_distribution_sleep_efficiency1(df: pd.DataFrame):
-    df = df.dropna()
+    df = df.dropna().copy()
+    df['Age groups'] = pd.cut(df['Age'], bins=range(0, int(df['Age'].max()) + 8, 8), right=False)
     sns.set_theme(style="whitegrid")
     plt.figure(figsize=(12, 8))
     sns.barplot(
-        data=df.head(20),
+        data=df,
         x='Sleep efficiency',
-        y='Age',
+        y='Age groups',
         hue='Exercise frequency',
         orient='h'
     )

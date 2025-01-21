@@ -2,7 +2,10 @@ import pandas
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import subplot, xlabel, ylabel, tight_layout
+
 file_path1 = "/Data/Sleep_Efficiency.csv"
+
 
 def open_file(file_path: str):
     """
@@ -22,7 +25,8 @@ def open_file(file_path: str):
         print("File not found")
         return None
 
-def show_table(df:pd.DataFrame):
+
+def show_table(df: pd.DataFrame):
     if df is not None:
         print(df.describe())
         print(df.head())
@@ -30,14 +34,15 @@ def show_table(df:pd.DataFrame):
         print("No data to display")
 
 
-def distribution(df:pd.DataFrame):
+def distribution(df: pd.DataFrame):
     df = df.dropna()
-    sns.kdeplot(data=df,x='Sleep efficiency',fill=True).set_title('Sleep efficiency', fontsize=20)
+    sns.kdeplot(data=df, x='Sleep efficiency', fill=True).set_title('Sleep efficiency', fontsize=20)
     plt.xlabel('Sleep Efficiency', fontsize=12)
     plt.ylabel('Density', fontsize=12)
     plt.show()
 
-def percentage(df:pd.DataFrame):
+
+def percentage(df: pd.DataFrame):
     df = df.dropna()
     plt.hist(df['REM sleep percentage'], label='REM (%)', alpha=0.5)
     plt.hist(df['Deep sleep percentage'], label='Deep (%)', alpha=0.5)
@@ -47,17 +52,19 @@ def percentage(df:pd.DataFrame):
     plt.legend()
     plt.show()
 
-def age_distribution_sleep_efficiency(df:pd.DataFrame):
+
+def age_distribution_sleep_efficiency(df: pd.DataFrame):
     df = df.dropna()
     sns.set_theme(style="whitegrid")
-    sns.barplot(df, x=df['Age'].head(20), y=df['Sleep efficiency'],hue='Exercise frequency',orient='h')
+    sns.barplot(df, x=df['Age'].head(20), y=df['Sleep efficiency'], hue='Exercise frequency', orient='h')
     plt.xlabel('Sleep Efficiency', fontsize=12)
     plt.ylabel('Age', fontsize=12)
-    plt.xticks([x for x in range(1,71, 5)],  rotation=45)
-    plt.title('Age vs Sleep Efficiency and Exercise frequency',fontsize=16)
+    plt.xticks([x for x in range(1, 71, 5)], rotation=45)
+    plt.title('Age vs Sleep Efficiency and Exercise frequency', fontsize=16)
     plt.grid(axis='both', alpha=0.7)
     sns.despine(left=True, bottom=True)
     plt.show()
+
 
 def age_distribution_sleep_efficiency_scatter(df: pd.DataFrame):
     sns.scatterplot(data=df, x='Age', y='Sleep efficiency')
@@ -66,22 +73,26 @@ def age_distribution_sleep_efficiency_scatter(df: pd.DataFrame):
     plt.ylabel('Sleep Efficiency')
     plt.show()
 
-def graph_smoking_influence_sleep_efficiency(df:pd.DataFrame):
+
+def graph_smoking_influence_sleep_efficiency(df: pd.DataFrame):
     df = df.dropna()
-    sns.barplot(df,x='Smoking status', y='Sleep efficiency',palette=['#FF4D00', '#A6D609'])
+    sns.barplot(df, x='Smoking status', y='Sleep efficiency', palette=['#FF4D00', '#A6D609'])
     plt.title('Smoking Status vs Sleep Efficiency', fontsize=16)
     plt.xlabel('Smoking Status', fontsize=12)
     plt.ylabel('Sleep Efficiency', fontsize=12)
     plt.tight_layout()
-    plt.show()
 
-def graph_caffeine_influence_awakenings(df:pd.DataFrame):
+
+
+
+def graph_caffeine_influence_awakenings(df: pd.DataFrame):
     df = df.dropna()
-    sns.countplot(x=df['Caffeine consumption'],hue=df['Awakenings'], palette='viridis')
+    sns.countplot(x=df['Caffeine consumption'], hue=df['Awakenings'], palette='viridis')
     plt.title('Coffeine consumption vs Awakenings during night', fontsize=16)
     plt.xlabel('Coffeine consumption', fontsize=12)
     plt.ylabel('Awakenings(number)', fontsize=12)
     plt.show()
+
 
 def age_distribution_sleep_efficiency1(df: pd.DataFrame):
     df = df.dropna().copy()
@@ -103,15 +114,48 @@ def age_distribution_sleep_efficiency1(df: pd.DataFrame):
     plt.tight_layout()
     plt.show()
 
+
+def male_vs_female(df: pd.DataFrame):
+    df = df.dropna()
+    sns.barplot(df, x='Gender', y='Sleep efficiency', palette='viridis')
+    xlabel("Gender")
+    ylabel("Sleep Efficiency")
+    plt.title('Gender vs Sleep Efficiency', fontsize=16)
+    tight_layout()
+
+
+
+def plots(df: pd.DataFrame):
+    subplot(1, 2, 1)
+    male_vs_female(df)
+    subplot(1, 2, 2)
+    graph_smoking_influence_sleep_efficiency(df)
+    plt.show()
+
+def graph1(df:pd.DataFrame):
+    df=df.dropna()
+    female=df[df['Gender']=='Female']
+    male=df[df['Gender'] == 'Male']
+    x=female['Sleep Efficiency']
+    x2=male['Sleep Efficiency']
+    plt.scatter(x,female['Age'],'ro')
+    plt.scatter(x2,male['Age'],'bo')
+    plt.title('Male vs Female')
+    plt.ylabel('Sleep Efficiency')
+    plt.grid(axis='both', alpha=0.7)
+    plt.show()
+
+
 if __name__ == '__main__':
     file_path = "../Data/Sleep_Efficiency.csv"
     data = open_file(file_path)
+    graph1(data)
+    plots(data)
     # print(data)
     # show_table(data)
-    #distribution(data)
+    # distribution(data)
     # percentage(data)
     # graph_caffeine_influence_awakenings(data)
-    age_distribution_sleep_efficiency1(data)
-   # age_distribution_sleep_efficiency_scatter(data)
-   #  graph_smoking_influence_sleep_efficiency(data)
-
+    # age_distribution_sleep_efficiency1(data)
+# age_distribution_sleep_efficiency_scatter(data)
+#  graph_smoking_influence_sleep_efficiency(data)

@@ -5,7 +5,7 @@ import customtkinter
 from customtkinter import *
 from tkinter import messagebox
 
-from Main.User import User
+#from Main.User import User
 
 
 #from Main.Main import generate_graphs

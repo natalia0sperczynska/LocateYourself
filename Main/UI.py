@@ -1,14 +1,19 @@
 from tkinter import IntVar, mainloop, W, StringVar, Toplevel
 from venv import create
 
+#Gówno dla mnie bo python nie umiał znaleźć biblioteki wykomentujcie
+import os
+os.environ['TCL_LIBRARY'] = r'C:/Users/tomek/AppData/Local/Programs/Python/Python313/tcl/tcl8.6'
+os.environ['TK_LIBRARY'] = r'C:/Users/tomek/AppData/Local/Programs/Python/Python313/tcl/tk8.6'
+
+
 import customtkinter
 from customtkinter import *
 from tkinter import messagebox
+from FirestoreIntegration import initialize_firestore, write_user_to_firestore
 
-#from Main.User import User
-
-
-#from Main.Main import generate_graphs
+# Initialize Firestore globally
+db = initialize_firestore()
 
 class MyCheckboxFrame(customtkinter.CTkFrame):
     def __init__(self, master,title,values):
@@ -112,8 +117,18 @@ class App(customtkinter.CTk):
     def check_data(self):
         if self.entryName.get() and self.radiobutton_frame.get():
             messagebox.showinfo("Success", "Your data has been entered")
-            #tutaj będzie ładowanie tyvh danych ale idk jak to zrobic jeszcze
-            app.create_user()
+            user = self.create_user()
+            user_data = {
+                "name": user.name,
+                "age": user.age,
+                "smoking_status": user.smoking_status,
+                "exercise": user.exercise,
+                "coffein_consumption": user.coffein_consumption,
+                "waking_up_during_night": user.waking_up_during_night,
+                "sleep_efficiency": user.sleep_efficiency_calculator(),
+            }
+            # Save to Firestore
+            write_user_to_firestore(db, user_data)
         if not self.entryName.get():
             messagebox.showerror("Error", "Please enter your name")
         if not self.radiobutton_frame.get():
@@ -125,25 +140,20 @@ class App(customtkinter.CTk):
 
     def generate_graphs(self):
         print("Graphs")
-        #wyświetlanie grafow tu bedzie na razie pisze na konsoli ze wyswietla XDDD
         graph_window = Toplevel(app)
         graph_window.title("Graphs")
-        #zrobilabym osobne okno na to
 
     def clear(self):
         self.labelAge.configure(text="")
         self.sliderAge.set(0)
         self.entryName.delete(0, END)
-        # self.radiobutton_frame.option_clear()
-        # self.checkbox_frame.option_clear()
 
     def click(self):
         pass
 
-    def create_user(self):
-        return User(self.entryName.get(),self.sliderAge.get(), self.checkbox_frame.get(), self.radiobutton_frame.get())
+    #def create_user(self):
+    #   return User(self.entryName.get(),self.sliderAge.get(), self.checkbox_frame.get(), self.radiobutton_frame.get())
 
 if __name__ == "__main__":
     app=App()
     app.mainloop()
-

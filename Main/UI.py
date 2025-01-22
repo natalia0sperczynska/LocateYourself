@@ -171,6 +171,20 @@ class MyFrame(customtkinter.CTkFrame):
                                               text_color="white", command=self.generate_graphs)
         self.button.pack(pady=12, padx=10)
 
+        #light or dar mode because why not
+        toggle_button = customtkinter.CTkButton(
+            self, text="Change Theme",fg_color="#5a65d6", hover_color="#c8cade",text_color="white", command=self.toggle_theme
+        )
+        toggle_button.pack(pady=8, padx=8)
+
+    def toggle_theme(self):
+        current_theme = customtkinter.get_appearance_mode().lower()
+        if current_theme == "dark":
+            customtkinter.set_appearance_mode("light")
+            customtkinter.set_default_color_theme("theme.json")
+        else:
+            customtkinter.set_appearance_mode("dark")
+            customtkinter.set_default_color_theme("dark-blue")
 
     def check_data(self):
         if self.entryName.get() and self.radiobutton_frame.get():
@@ -217,7 +231,7 @@ class MyFrame(customtkinter.CTkFrame):
         t = np.arange(0, 3, .01)
         fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
 
-        canvas = FigureCanvasTkAgg(fig, master=plotsFrame)  # A tk.DrawingArea.
+        canvas = FigureCanvasTkAgg(fig, master=plotsFrame)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
 
@@ -228,13 +242,15 @@ class MyFrame(customtkinter.CTkFrame):
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-        # self.geometry("800x1000")
+        self.geometry("800x1200")
         self.title("LocateYourself")
+        customtkinter.set_default_color_theme("green")
+        #customtkinter.set_appearance_mode("dark")
+        #customtkinter.set_default_color_theme("dark-blue")
         icon = PhotoImage(file="../Images/icon.png")
         self.iconphoto(True, icon)
         self.grid_columnconfigure((0, 1), weight=1)
-        customtkinter.set_appearance_mode("dark")
-        customtkinter.set_default_color_theme("dark-blue")
+
 
         self.tabControl = ttk.Notebook(self)
         self.tabControl.pack(expand=True, fill="both")

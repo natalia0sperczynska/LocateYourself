@@ -77,11 +77,9 @@ def age_distribution_sleep_efficiency_scatter(df: pd.DataFrame):
 def graph_smoking_influence_sleep_efficiency(df: pd.DataFrame):
     df = df.dropna()
     sns.barplot(df, x='Smoking status', y='Sleep efficiency', palette=['#FF4D00', '#A6D609'])
-    plt.title('Smoking Status vs Sleep Efficiency', fontsize=16)
+    plt.title('Smoking Status vs Sleep Efficiency', fontsize=10)
     plt.xlabel('Smoking Status', fontsize=12)
     plt.ylabel('Sleep Efficiency', fontsize=12)
-    plt.tight_layout()
-
 
 
 
@@ -114,48 +112,37 @@ def age_distribution_sleep_efficiency1(df: pd.DataFrame):
     plt.tight_layout()
     plt.show()
 
-
-def male_vs_female(df: pd.DataFrame):
-    df = df.dropna()
-    sns.barplot(df, x='Gender', y='Sleep efficiency', palette='viridis')
-    xlabel("Gender")
-    ylabel("Sleep Efficiency")
-    plt.title('Gender vs Sleep Efficiency', fontsize=16)
-    tight_layout()
-
-
-
 def plots(df: pd.DataFrame):
-    subplot(1, 2, 1)
-    male_vs_female(df)
-    subplot(1, 2, 2)
+    plt.figure(figsize=(12, 6))
+    plt.subplot(1, 2, 1)
+    graph_male_female(df)
+    plt.subplot(1, 2, 2)
     graph_smoking_influence_sleep_efficiency(df)
+    plt.tight_layout()
     plt.show()
 
-def graph1(df:pd.DataFrame):
-    df=df.dropna()
-    female=df[df['Gender']=='Female']
-    male=df[df['Gender'] == 'Male']
-    x=female['Sleep Efficiency']
-    x2=male['Sleep Efficiency']
-    plt.scatter(x,female['Age'],'ro')
-    plt.scatter(x2,male['Age'],'bo')
-    plt.title('Male vs Female')
+def graph_male_female(df:pd.DataFrame):
+    sns.boxplot(data=df, x='Gender', y='Sleep efficiency', hue='Gender', palette={'Female': 'red', 'Male': 'blue'}, legend=False)
+    plt.title('Distribution of Sleep Efficiency by Gender',fontsize=10)
+    plt.xlabel('Gender')
     plt.ylabel('Sleep Efficiency')
-    plt.grid(axis='both', alpha=0.7)
-    plt.show()
+  
 
 
 if __name__ == '__main__':
-    file_path = "../Data/Sleep_Efficiency.csv"
-    data = open_file(file_path)
-    graph1(data)
-    plots(data)
-    # print(data)
+    #grpahs first daataset
+    file_path_sleep_efficiency = "../Data/Sleep_Efficiency.csv"
+    file_path_sleep_health_and_lifestyle = "../Data/Sleep_Efficiency.csv"
+    data_sleep_efficiency = open_file(file_path_sleep_efficiency)
+    plots(data_sleep_efficiency)
+    #print(data)
     # show_table(data)
-    # distribution(data)
-    # percentage(data)
-    # graph_caffeine_influence_awakenings(data)
-    # age_distribution_sleep_efficiency1(data)
-# age_distribution_sleep_efficiency_scatter(data)
-#  graph_smoking_influence_sleep_efficiency(data)
+    distribution(data_sleep_efficiency)
+    #percentage(data)
+    graph_caffeine_influence_awakenings(data_sleep_efficiency)
+    age_distribution_sleep_efficiency1(data_sleep_efficiency)
+
+    #graphs seconddataset
+    data_sleep_lifestyle=open_file(file_path_sleep_health_and_lifestyle)
+
+

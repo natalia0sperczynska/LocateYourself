@@ -208,19 +208,22 @@ class MyFrame(customtkinter.CTkFrame):
         self.sliderWakeUpTimes.clear()
 
     def generate_graphs(self):
-        plotsFrame = Frame(self.root)
-        plotsFrame.pack()
         self.generatedTabs += 1
-
+        plotsFrame = customtkinter.CTkFrame(self.tabControl)
+        plotsFrame.pack(expand=True, fill="both")
         self.root.add(plotsFrame, text=f"Graphs{self.generatedTabs}")
 
         fig = Figure(figsize=(5, 4), dpi=100)
         t = np.arange(0, 3, .01)
         fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
 
-        canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea.
+        canvas = FigureCanvasTkAgg(fig, master=plotsFrame)  # A tk.DrawingArea.
         canvas.draw()
         canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
+
+        toolbar = NavigationToolbar2Tk(canvas, plotsFrame)
+        toolbar.update()
+        toolbar.pack(side=tkinter.BOTTOM, fill=tkinter.X)
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -233,13 +236,12 @@ class App(customtkinter.CTk):
         customtkinter.set_appearance_mode("dark")
         customtkinter.set_default_color_theme("dark-blue")
 
-        tabControl = ttk.Notebook(self)
-        tabControl.pack(expand=True, fill="both")
+        self.tabControl = ttk.Notebook(self)
+        self.tabControl.pack(expand=True, fill="both")
 
-        inputFrame = MyFrame(tabControl)
+        inputFrame = MyFrame(self.tabControl)
         inputFrame.pack()
-
-        tabControl.add(inputFrame, text="Input")
+        self.tabControl.add(inputFrame, text="Input")
 
         # canvas = tkinter.Canvas(rootFrame)
         # canvas.pack()

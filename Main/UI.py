@@ -8,6 +8,7 @@ import numpy as np
 from customtkinter import *
 from tkinter import messagebox
 
+from firebase_admin import db
 from matplotlib.backends._backend_tk import NavigationToolbar2Tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
@@ -199,16 +200,35 @@ class MyFrame(customtkinter.CTkFrame):
         if not self.checkbox_frame.get() and not self.radiobutton_frame.get() and not self.sliderAge.get():
             messagebox.showerror("Error", "Please enter your data")
 
+            user = self.get_data()
+            self.save_to_firebase(user)
+    #
+    # def get_data(self):
+    #     user = User(self.entryName.get(),
+    #                 int(self.sliderAge.get()),
+    #                 float(self.sliderSleepHours.get() / self.sliderTimeInBed.get() * 100),
+    #                 self.checkbox_frame.get(),
+    #                 int(self.sliderExerciseFrequency.get()),
+    #                 int(self.entryCaffeine.get()),
+    #                 int(self.sliderWakeUpTimes.get()))
+    #     return user
+# nowe zmieione
     def get_data(self):
-        user = User(self.entryName.get(),
-                    int(self.sliderAge.get()),
-                    float(self.sliderSleepHours.get() / self.sliderTimeInBed.get() * 100),
-                    self.checkbox_frame.get(),
-                    int(self.sliderExerciseFrequency.get()),
-                    int(self.entryCaffeine.get()),
-                    int(self.sliderWakeUpTimes.get()))
-        return user
-
+        """Collect user input into a User object."""
+        try:
+            user = User(
+                name=self.entryName.get(),
+                age=int(self.sliderAge.get()),
+                sleep_efficeincy=float(self.sliderSleepHours.get() / self.sliderTimeInBed.get() * 100),
+                smoking_status=self.checkbox_frame.get(),
+                exercise=int(self.sliderExerciseFrequency.get()),
+                coffein_consumption=int(self.entryCaffeine.get()) if self.entryCaffeine.get() else 0,
+                waking_up_during_night=int(self.sliderWakeUpTimes.get())
+            )
+            return user
+        except Exception as e:
+            messagebox.showerror("Error", f"Invalid data: {e}")
+            return None
 
     def clear(self):
         self.entryName.delete(0, "end")
@@ -238,6 +258,8 @@ class MyFrame(customtkinter.CTkFrame):
         toolbar = NavigationToolbar2Tk(canvas, plotsFrame)
         toolbar.update()
         toolbar.pack(side=tkinter.BOTTOM, fill=tkinter.X)
+
+
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -276,6 +298,25 @@ class App(customtkinter.CTk):
 
     # def create_user(self):
     #     return User(self.entryName.get(),self.sliderAge.get(), self.checkbox_frame.get(), self.radiobutton_frame.get())
+
+
+#nowe
+def save_to_firebase(self, user):
+
+    try:
+        ref = db.reference("/users")
+        ref.push({
+            "name": user.name,
+            "age": user.age,
+            "sleep_efficiency": user.sleep_efficeincy,
+            "smoking_status": user.smoking_status,
+            "exercise": user.exercise,
+            "caffeine_consumption": user.coffein_consumption,
+            "waking_up_during_night": user.waking_up_during_night,
+        })
+        messagebox.showinfo("Success", "Your data has been saved to Firebase")
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to save data to Firebase: {e}")
 
 if __name__ == "__main__":
     app=App()

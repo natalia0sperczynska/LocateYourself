@@ -5,27 +5,29 @@ from venv import create
 
 import customtkinter
 import numpy as np
+import pandas as pd
 from customtkinter import *
 from tkinter import messagebox
-
+import pandas
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from matplotlib.pyplot import subplot, xlabel, ylabel, tight_layout
 from firebase_admin import db
+from matplotlib import pyplot as plt
 from matplotlib.backends._backend_tk import NavigationToolbar2Tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+
+from Graphs.Main import open_file, distribution, graph_male_female, age_distribution_sleep_efficiency1, \
+    graph_caffeine_influence_awakenings
+from User.User import User
+from firebase.firebase import initialize_firebase
 
 
 #from Main.User import User
 #from Main.Main import generate_graphs
 
-class User:
-    def __init__(self, name, age, sleep_efficeincy,smoking_status,exercise, coffein_consumption,waking_up_during_night):
-        self.name = name
-        self.age = age
-        self.sleep_efficeincy=sleep_efficeincy
-        self.smoking_status = smoking_status
-        self.exercise = exercise
-        self.coffein_consumption = coffein_consumption
-        self.waking_up_during_night = waking_up_during_night
 
 class MyCheckboxFrame(customtkinter.CTkFrame):
     def __init__(self, master,title,values):
@@ -182,7 +184,7 @@ class MyFrame(customtkinter.CTkFrame):
         current_theme = customtkinter.get_appearance_mode().lower()
         if current_theme == "dark":
             customtkinter.set_appearance_mode("light")
-            customtkinter.set_default_color_theme("theme.json")
+            customtkinter.set_default_color_theme("blue")
         else:
             customtkinter.set_appearance_mode("dark")
             customtkinter.set_default_color_theme("dark-blue")
@@ -202,16 +204,7 @@ class MyFrame(customtkinter.CTkFrame):
 
             user = self.get_data()
             self.save_to_firebase(user)
-    #
-    # def get_data(self):
-    #     user = User(self.entryName.get(),
-    #                 int(self.sliderAge.get()),
-    #                 float(self.sliderSleepHours.get() / self.sliderTimeInBed.get() * 100),
-    #                 self.checkbox_frame.get(),
-    #                 int(self.sliderExerciseFrequency.get()),
-    #                 int(self.entryCaffeine.get()),
-    #                 int(self.sliderWakeUpTimes.get()))
-    #     return user
+
 # nowe zmieione
     def get_data(self):
         """Collect user input into a User object."""
@@ -242,14 +235,23 @@ class MyFrame(customtkinter.CTkFrame):
         self.sliderWakeUpTimes.clear()
 
     def generate_graphs(self):
+        path_data_sleep_efficiency = "../Data/Sleep_Efficiency.csv"
+        data = open_file(path_data_sleep_efficiency)
+        if data is None:
+            messagebox.showerror("Error", "No data available to generate graphs.")
+            return
         self.generatedTabs += 1
         plotsFrame = customtkinter.CTkFrame(self.tabControl)
         plotsFrame.pack(expand=True, fill="both")
         self.root.add(plotsFrame, text=f"Graphs{self.generatedTabs}")
 
-        fig = Figure(figsize=(5, 4), dpi=100)
-        t = np.arange(0, 3, .01)
-        fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
+        fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+        fig.tight_layout(pad=5.0)
+
+        distribution(data)
+        graph_male_female(data)
+        age_distribution_sleep_efficiency1(data)
+        graph_caffeine_influence_awakenings(data)
 
         canvas = FigureCanvasTkAgg(fig, master=plotsFrame)
         canvas.draw()
@@ -259,16 +261,32 @@ class MyFrame(customtkinter.CTkFrame):
         toolbar.update()
         toolbar.pack(side=tkinter.BOTTOM, fill=tkinter.X)
 
+    # nowe
+    def save_to_firebase(self, user):
 
+        try:
+            ref = db.reference("/users")
+            ref.push({
+                "name": user.name,
+                "age": user.age,
+                "sleep_efficiency": user.sleep_efficeincy,
+                "smoking_status": user.smoking_status,
+                "exercise": user.exercise,
+                "caffeine_consumption": user.coffein_consumption,
+                "waking_up_during_night": user.waking_up_during_night,
+            })
+            messagebox.showinfo("Success", "Your data has been saved to Firebase")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save data to Firebase: {e}")
 
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         self.geometry("800x1200")
         self.title("LocateYourself")
-        customtkinter.set_default_color_theme("green")
-        #customtkinter.set_appearance_mode("dark")
-        #customtkinter.set_default_color_theme("dark-blue")
+        customtkinter.set_default_color_theme("blue")
+        customtkinter.set_appearance_mode("dark")
+        customtkinter.set_default_color_theme("dark-blue")
         icon = PhotoImage(file="../Images/icon.png")
         self.iconphoto(True, icon)
         self.grid_columnconfigure((0, 1), weight=1)
@@ -295,30 +313,9 @@ class App(customtkinter.CTk):
         #
         # frame.pack()
 
-
-    # def create_user(self):
-    #     return User(self.entryName.get(),self.sliderAge.get(), self.checkbox_frame.get(), self.radiobutton_frame.get())
-
-
-#nowe
-def save_to_firebase(self, user):
-
-    try:
-        ref = db.reference("/users")
-        ref.push({
-            "name": user.name,
-            "age": user.age,
-            "sleep_efficiency": user.sleep_efficeincy,
-            "smoking_status": user.smoking_status,
-            "exercise": user.exercise,
-            "caffeine_consumption": user.coffein_consumption,
-            "waking_up_during_night": user.waking_up_during_night,
-        })
-        messagebox.showinfo("Success", "Your data has been saved to Firebase")
-    except Exception as e:
-        messagebox.showerror("Error", f"Failed to save data to Firebase: {e}")
-
 if __name__ == "__main__":
+    #initialize_firebase()
+
     app=App()
     app.mainloop()
 

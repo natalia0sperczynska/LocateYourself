@@ -39,7 +39,7 @@ def distribution(df: pd.DataFrame):
     sns.kdeplot(data=df, x='Sleep efficiency', fill=True).set_title('Sleep efficiency', fontsize=20)
     plt.xlabel('Sleep Efficiency', fontsize=12)
     plt.ylabel('Density', fontsize=12)
-    plt.show()
+
 
 
 def percentage(df: pd.DataFrame):
@@ -50,7 +50,7 @@ def percentage(df: pd.DataFrame):
     plt.xlabel('percentage')
     plt.ylabel('count')
     plt.legend()
-    plt.show()
+
 
 
 def age_distribution_sleep_efficiency(df: pd.DataFrame):
@@ -63,7 +63,7 @@ def age_distribution_sleep_efficiency(df: pd.DataFrame):
     plt.title('Age vs Sleep Efficiency and Exercise frequency', fontsize=16)
     plt.grid(axis='both', alpha=0.7)
     sns.despine(left=True, bottom=True)
-    plt.show()
+
 
 
 def age_distribution_sleep_efficiency_scatter(df: pd.DataFrame):
@@ -71,7 +71,7 @@ def age_distribution_sleep_efficiency_scatter(df: pd.DataFrame):
     plt.title('Age vs Sleep Efficiency')
     plt.xlabel('Age')
     plt.ylabel('Sleep Efficiency')
-    plt.show()
+
 
 
 def graph_smoking_influence_sleep_efficiency(df: pd.DataFrame):
@@ -89,7 +89,7 @@ def graph_caffeine_influence_awakenings(df: pd.DataFrame):
     plt.title('Coffeine consumption vs Awakenings during night', fontsize=16)
     plt.xlabel('Coffeine consumption', fontsize=12)
     plt.ylabel('Awakenings(number)', fontsize=12)
-    plt.show()
+
 
 
 def age_distribution_sleep_efficiency1(df: pd.DataFrame):
@@ -110,7 +110,7 @@ def age_distribution_sleep_efficiency1(df: pd.DataFrame):
     plt.grid(axis='both', alpha=0.7)
     sns.despine(left=True, bottom=True)
     plt.tight_layout()
-    plt.show()
+
 
 def plots(df: pd.DataFrame):
     plt.figure(figsize=(12, 6))
@@ -130,19 +130,19 @@ def graph_male_female(df:pd.DataFrame):
 
 
 if __name__ == '__main__':
+    pass
     #grpahs first daataset
-    file_path_sleep_efficiency = "../Data/Sleep_Efficiency.csv"
-    file_path_sleep_health_and_lifestyle = "../Data/Sleep_Efficiency.csv"
-    data_sleep_efficiency = open_file(file_path_sleep_efficiency)
-    plots(data_sleep_efficiency)
-    #print(data)
-    # show_table(data)
-    distribution(data_sleep_efficiency)
-    #percentage(data)
-    graph_caffeine_influence_awakenings(data_sleep_efficiency)
-    age_distribution_sleep_efficiency1(data_sleep_efficiency)
+    # data_sleep_efficiency = "../Data/Sleep_Efficiency.csv"
+    # file_path_sleep_health_and_lifestyle = "../Data/Sleep_Efficiency.csv"
+    # data_sleep_efficiency = open_file(data_sleep_efficiency)
+    # plots(data_sleep_efficiency)
+    # #print(data)
+    # # show_table(data)
+    # distribution(data_sleep_efficiency)
+    # #percentage(data)
+    # graph_caffeine_influence_awakenings(data_sleep_efficiency)
+    # age_distribution_sleep_efficiency1(data_sleep_efficiency)
 
-    #graphs seconddataset
-    data_sleep_lifestyle=open_file(file_path_sleep_health_and_lifestyle)
+
 
 

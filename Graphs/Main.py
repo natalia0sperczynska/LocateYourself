@@ -34,9 +34,9 @@ def show_table(df: pd.DataFrame):
         print("No data to display")
 
 
-def distribution(df: pd.DataFrame):
+def distribution(df: pd.DataFrame,ax):
     df = df.dropna()
-    sns.kdeplot(data=df, x='Sleep efficiency', fill=True).set_title('Sleep efficiency', fontsize=20)
+    sns.kdeplot(data=df, x='Sleep efficiency', fill=True,ax=ax).set_title('Sleep efficiency', fontsize=20)
     plt.xlabel('Sleep Efficiency', fontsize=12)
     plt.ylabel('Density', fontsize=12)
 
@@ -83,16 +83,16 @@ def graph_smoking_influence_sleep_efficiency(df: pd.DataFrame):
 
 
 
-def graph_caffeine_influence_awakenings(df: pd.DataFrame):
+def graph_caffeine_influence_awakenings(df: pd.DataFrame,ax):
     df = df.dropna()
-    sns.countplot(x=df['Caffeine consumption'], hue=df['Awakenings'], palette='viridis')
+    sns.countplot(x=df['Caffeine consumption'], hue=df['Awakenings'], palette='viridis',ax=ax)
     plt.title('Coffeine consumption vs Awakenings during night', fontsize=16)
     plt.xlabel('Coffeine consumption', fontsize=12)
     plt.ylabel('Awakenings(number)', fontsize=12)
 
 
 
-def age_distribution_sleep_efficiency1(df: pd.DataFrame):
+def age_distribution_sleep_efficiency1(df: pd.DataFrame,ax):
     df = df.dropna().copy()
     df['Age groups'] = pd.cut(df['Age'], bins=range(0, int(df['Age'].max()) + 8, 8), right=False)
     sns.set_theme(style="whitegrid")
@@ -102,7 +102,7 @@ def age_distribution_sleep_efficiency1(df: pd.DataFrame):
         x='Sleep efficiency',
         y='Age groups',
         hue='Exercise frequency',
-        orient='h'
+        orient='h',ax=ax
     )
     plt.xlabel('Sleep Efficiency', fontsize=12)
     plt.ylabel('Age', fontsize=12)
@@ -121,8 +121,8 @@ def plots(df: pd.DataFrame):
     plt.tight_layout()
     plt.show()
 
-def graph_male_female(df:pd.DataFrame):
-    sns.boxplot(data=df, x='Gender', y='Sleep efficiency', hue='Gender', palette={'Female': 'red', 'Male': 'blue'}, legend=False)
+def graph_male_female(df:pd.DataFrame,ax):
+    sns.boxplot(data=df, x='Gender', y='Sleep efficiency', hue='Gender', palette={'Female': 'red', 'Male': 'blue'}, legend=False,ax=ax)
     plt.title('Distribution of Sleep Efficiency by Gender',fontsize=10)
     plt.xlabel('Gender')
     plt.ylabel('Sleep Efficiency')

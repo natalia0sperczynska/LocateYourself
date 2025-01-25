@@ -20,7 +20,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 from Graphs.Main import open_file, distribution, graph_male_female, age_distribution_sleep_efficiency1, \
-    graph_caffeine_influence_awakenings
+    graph_caffeine_influence_awakenings, plots
 from User.User import User
 from firebase.firebase import initialize_firebase
 
@@ -245,13 +245,26 @@ class MyFrame(customtkinter.CTkFrame):
         plotsFrame.pack(expand=True, fill="both")
         self.root.add(plotsFrame, text=f"Graphs{self.generatedTabs}")
 
-        fig, axes = plt.subplots(2, 2, figsize=(10, 8))
-        fig.tight_layout(pad=5.0)
 
-        distribution(data)
-        graph_male_female(data)
-        age_distribution_sleep_efficiency1(data)
-        graph_caffeine_influence_awakenings(data)
+        fig, axs = plt.subplots(2, 2, figsize=(10, 8))  # 2x2 grid of subplots
+        fig.tight_layout(pad=5.0)  # Adjust layout spacing
+
+        # Access the subplots individually using tuple unpacking
+        (ax1, ax2), (ax3, ax4) = axs
+
+        # Now, plot the graphs on the individual axes
+        # First plot on ax1
+        distribution(data, ax=ax1)
+
+        # Second plot on ax2
+        graph_male_female(data, ax=ax2)
+
+        # Third plot on ax3
+        age_distribution_sleep_efficiency1(data, ax=ax3)
+
+        # Fourth plot on ax4
+        graph_caffeine_influence_awakenings(data, ax=ax4)
+
 
         canvas = FigureCanvasTkAgg(fig, master=plotsFrame)
         canvas.draw()
@@ -299,19 +312,19 @@ class App(customtkinter.CTk):
         inputFrame.pack()
         self.tabControl.add(inputFrame, text="Input")
 
-        # canvas = tkinter.Canvas(rootFrame)
-        # canvas.pack()
-        #
-        # myscrollbar = Scrollbar(rootFrame, orient="vertical", command=canvas.yview)
-        # myscrollbar.pack(side="right", fill="y")
-        #
-        # frame = MyFrame(canvas)
-        #
-        # canvas.create_window((0, 0), window=frame, anchor="nw")
-        #
-        # canvas.configure(yscrollcommand=myscrollbar.set)
-        #
-        # frame.pack()
+        canvas = tkinter.Canvas(inputFrame)
+        canvas.pack()
+
+        myscrollbar = Scrollbar(inputFrame, orient="vertical", command=canvas.yview)
+        myscrollbar.pack(side="right", fill="y")
+
+        frame = MyFrame(canvas)
+
+        canvas.create_window((0, 0), window=frame, anchor="nw")
+
+        canvas.configure(yscrollcommand=myscrollbar.set)
+
+        frame.pack()
 
 if __name__ == "__main__":
     #initialize_firebase()

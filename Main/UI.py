@@ -20,7 +20,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 from Graphs.Main import open_file, distribution, graph_male_female, age_distribution_sleep_efficiency1, \
-    graph_caffeine_influence_awakenings, plots
+    graph_caffeine_influence_awakenings, plots, graph_smoking_influence_sleep_efficiency
 from User.User import User
 from firebase.firebase import initialize_firebase
 
@@ -245,26 +245,19 @@ class MyFrame(customtkinter.CTkFrame):
         plotsFrame.pack(expand=True, fill="both")
         self.root.add(plotsFrame, text=f"Graphs{self.generatedTabs}")
 
+        fig, axs = plt.subplots(3, 2, figsize=(12, 10))
+        fig.tight_layout(pad=5.0)
 
-        fig, axs = plt.subplots(2, 2, figsize=(10, 8))  # 2x2 grid of subplots
-        fig.tight_layout(pad=5.0)  # Adjust layout spacing
+        ax1, ax2= axs[0]
+        ax3, ax4= axs[1]
+        ax5, ax6 = axs[2]
 
-        # Access the subplots individually using tuple unpacking
-        (ax1, ax2), (ax3, ax4) = axs
-
-        # Now, plot the graphs on the individual axes
-        # First plot on ax1
         distribution(data, ax=ax1)
-
-        # Second plot on ax2
         graph_male_female(data, ax=ax2)
-
-        # Third plot on ax3
         age_distribution_sleep_efficiency1(data, ax=ax3)
-
-        # Fourth plot on ax4
         graph_caffeine_influence_awakenings(data, ax=ax4)
-
+        graph_smoking_influence_sleep_efficiency(data, ax=ax5)
+        graph_caffeine_influence_awakenings(data, ax=ax6)
 
         canvas = FigureCanvasTkAgg(fig, master=plotsFrame)
         canvas.draw()

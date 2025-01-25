@@ -74,9 +74,9 @@ def age_distribution_sleep_efficiency_scatter(df: pd.DataFrame):
 
 
 
-def graph_smoking_influence_sleep_efficiency(df: pd.DataFrame):
+def graph_smoking_influence_sleep_efficiency(df: pd.DataFrame,ax):
     df = df.dropna()
-    sns.barplot(df, x='Smoking status', y='Sleep efficiency', palette=['#FF4D00', '#A6D609'])
+    sns.barplot(df, x='Smoking status', y='Sleep efficiency', palette=['#FF4D00', '#A6D609'],ax=ax)
     plt.title('Smoking Status vs Sleep Efficiency', fontsize=10)
     plt.xlabel('Smoking Status', fontsize=12)
     plt.ylabel('Sleep Efficiency', fontsize=12)

@@ -10,7 +10,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 from Graphs.Main import open_file, distribution, graph_male_female, age_distribution_sleep_efficiency1, \
-    graph_caffeine_influence_awakenings, plots, graph_smoking_influence_sleep_efficiency
+    graph_caffeine_influence_awakenings,graph_smoking_influence_sleep_efficiency
 from User.User import User
 from firebase.firebase import initialize_firebase
 
@@ -235,7 +235,8 @@ class MyFrame(customtkinter.CTkFrame):
                 smoking_status=self.checkbox_frame.get(),
                 exercise=int(self.sliderExerciseFrequency.get()),
                 coffein_consumption=int(self.entryCaffeine.get()) if self.entryCaffeine.get() else 0,
-                waking_up_during_night=int(self.sliderWakeUpTimes.get())
+                waking_up_during_night=int(self.sliderWakeUpTimes.get()),
+                sex=self.radiobutton_frame.get()
             )
             return user
         except Exception as e:
@@ -273,7 +274,7 @@ class MyFrame(customtkinter.CTkFrame):
         user=self.get_data()
 
         distribution(data,user,ax=ax1)
-        graph_male_female(data, ax=ax2)
+        graph_male_female(data,user, ax=ax2)
         age_distribution_sleep_efficiency1(data, ax=ax3)
         graph_caffeine_influence_awakenings(data, ax=ax4)
         graph_smoking_influence_sleep_efficiency(data, ax=ax5)

@@ -1,3 +1,4 @@
+import matplotlib
 import pandas
 import pandas as pd
 import seaborn as sns
@@ -34,13 +35,13 @@ def show_table(df: pd.DataFrame):
         print("No data to display")
 
 
-def distribution(df: pd.DataFrame,ax):
-    df = df.dropna()
+def distribution(df: pd.DataFrame,user,ax):
+    #df = df.dropna()
     sns.kdeplot(data=df, x='Sleep efficiency', fill=True,ax=ax).set_title('Sleep efficiency', fontsize=20)
     plt.xlabel('Sleep Efficiency', fontsize=12)
     plt.ylabel('Density', fontsize=12)
-
-
+    ax.axvline(x=user.sleep_efficeincy, color='b', label='axvline - full height')
+    #plt.show()
 
 def percentage(df: pd.DataFrame):
     df = df.dropna()
@@ -132,13 +133,14 @@ def graph_male_female(df:pd.DataFrame,ax):
 if __name__ == '__main__':
     pass
     #grpahs first daataset
-    # data_sleep_efficiency = "../Data/Sleep_Efficiency.csv"
-    # file_path_sleep_health_and_lifestyle = "../Data/Sleep_Efficiency.csv"
+    data_sleep_efficiency = "../Data/Sleep_Efficiency.csv"
+    file_path_sleep_health_and_lifestyle = "../Data/Sleep_Efficiency.csv"
+    data=open_file(data_sleep_efficiency)
     # data_sleep_efficiency = open_file(data_sleep_efficiency)
     # plots(data_sleep_efficiency)
     # #print(data)
     # # show_table(data)
-    # distribution(data_sleep_efficiency)
+    distribution(data)
     # #percentage(data)
     # graph_caffeine_influence_awakenings(data_sleep_efficiency)
     # age_distribution_sleep_efficiency1(data_sleep_efficiency)

@@ -1,23 +1,13 @@
-import tkinter
+import tkinter as tk
 from tkinter import IntVar, mainloop, W, StringVar, Toplevel, PhotoImage, ttk
 from tkinter.ttk import Scrollbar, Frame, Notebook
-from venv import create
-
 import customtkinter
-import numpy as np
-import pandas as pd
-from customtkinter import *
 from tkinter import messagebox
-import pandas
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-from matplotlib.pyplot import subplot, xlabel, ylabel, tight_layout
 from firebase_admin import db
 from matplotlib import pyplot as plt
 from matplotlib.backends._backend_tk import NavigationToolbar2Tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
+
 
 from Graphs.Main import open_file, distribution, graph_male_female, age_distribution_sleep_efficiency1, \
     graph_caffeine_influence_awakenings, plots, graph_smoking_influence_sleep_efficiency
@@ -111,12 +101,41 @@ class MySliderFrame(customtkinter.CTkFrame):
         self.slider.set(0)
         self.value_label.configure(text="0")
 
+class VerticalScrolledFrame(ttk.Frame):
+    def __init__(self, parent, *args, **kw):
+        ttk.Frame.__init__(self, parent, *args, **kw)
+
+        vscrollbar = ttk.Scrollbar(self, orient=tk.VERTICAL)
+        vscrollbar.pack(fill=tk.Y, side=tk.RIGHT, expand=tk.FALSE)
+        self.canvas = tk.Canvas(self, bd=0, highlightthickness=0,
+                                yscrollcommand=vscrollbar.set)
+        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
+        vscrollbar.config(command=self.canvas.yview)
+
+        self.canvas.xview_moveto(0)
+        self.canvas.yview_moveto(0)
+
+        self.interior = ttk.Frame(self.canvas)
+        self.interior_id = self.canvas.create_window(0, 0, window=self.interior, anchor=tk.NW)
+        self.interior.bind('<Configure>', self._configure_interior)
+        self.canvas.bind('<Configure>', self._configure_canvas)
+
+    def _configure_interior(self, event):
+        size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
+        self.canvas.config(scrollregion=(0, 0, size[0], size[1]))
+        if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
+            self.canvas.config(width=self.interior.winfo_reqwidth())
+
+    def _configure_canvas(self, event):
+        if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
+            self.canvas.itemconfigure(self.interior_id, width=self.canvas.winfo_width())
+
 class MyFrame(customtkinter.CTkFrame):
-    def __init__(self, root):
+    def __init__(self, root, tabControl):
         super().__init__(root)
         self.root = root
         self.generatedTabs = 0
-        self.tabControl=root
+        self.tabControl=tabControl
 
         # name
         self.entryName = customtkinter.CTkEntry(self, placeholder_text="Enter your name")
@@ -192,7 +211,7 @@ class MyFrame(customtkinter.CTkFrame):
     def check_data(self):
         if self.entryName.get() and self.radiobutton_frame.get():
             messagebox.showinfo("Success", "Your data has been entered")
-            self.get_data() #bierze dane ale co dalej to idk jeszcze
+            self.get_data()
         if not self.entryName.get():
             messagebox.showerror("Error", "Please enter your name")
         if not self.radiobutton_frame.get():
@@ -212,7 +231,7 @@ class MyFrame(customtkinter.CTkFrame):
             user = User(
                 name=self.entryName.get(),
                 age=int(self.sliderAge.get()),
-                sleep_efficeincy=float(self.sliderSleepHours.get() / self.sliderTimeInBed.get() * 100),
+                sleep_efficeincy=float(self.sliderSleepHours.get() / self.sliderTimeInBed.get()),
                 smoking_status=self.checkbox_frame.get(),
                 exercise=int(self.sliderExerciseFrequency.get()),
                 coffein_consumption=int(self.entryCaffeine.get()) if self.entryCaffeine.get() else 0,
@@ -243,16 +262,17 @@ class MyFrame(customtkinter.CTkFrame):
         self.generatedTabs += 1
         plotsFrame = customtkinter.CTkFrame(self.tabControl)
         plotsFrame.pack(expand=True, fill="both")
-        self.root.add(plotsFrame, text=f"Graphs{self.generatedTabs}")
+        self.tabControl.add(plotsFrame, text=f"Graphs{self.generatedTabs}")
 
-        fig, axs = plt.subplots(3, 2, figsize=(12, 10))
+        fig, axs = plt.subplots(3,2,figsize=(12, 10))
         fig.tight_layout(pad=5.0)
 
         ax1, ax2= axs[0]
         ax3, ax4= axs[1]
         ax5, ax6 = axs[2]
+        user=self.get_data()
 
-        distribution(data, ax=ax1)
+        distribution(data,user,ax=ax1)
         graph_male_female(data, ax=ax2)
         age_distribution_sleep_efficiency1(data, ax=ax3)
         graph_caffeine_influence_awakenings(data, ax=ax4)
@@ -261,11 +281,11 @@ class MyFrame(customtkinter.CTkFrame):
 
         canvas = FigureCanvasTkAgg(fig, master=plotsFrame)
         canvas.draw()
-        canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
         toolbar = NavigationToolbar2Tk(canvas, plotsFrame)
         toolbar.update()
-        toolbar.pack(side=tkinter.BOTTOM, fill=tkinter.X)
+        toolbar.pack(side=tk.BOTTOM, fill=tk.X)
 
     # nowe
     def save_to_firebase(self, user):
@@ -288,7 +308,7 @@ class MyFrame(customtkinter.CTkFrame):
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-        self.geometry("800x1200")
+        self.geometry("800x1000")
         self.title("LocateYourself")
         customtkinter.set_default_color_theme("blue")
         customtkinter.set_appearance_mode("dark")
@@ -297,27 +317,16 @@ class App(customtkinter.CTk):
         self.iconphoto(True, icon)
         self.grid_columnconfigure((0, 1), weight=1)
 
-
         self.tabControl = ttk.Notebook(self)
         self.tabControl.pack(expand=True, fill="both")
 
-        inputFrame = MyFrame(self.tabControl)
-        inputFrame.pack()
-        self.tabControl.add(inputFrame, text="Input")
+        scrollable_frame = VerticalScrolledFrame(self.tabControl)
+        scrollable_frame.pack(expand=True, fill="both")
 
-        canvas = tkinter.Canvas(inputFrame)
-        canvas.pack()
+        input_frame = MyFrame(scrollable_frame.interior, self.tabControl)
+        input_frame.pack(expand=True, fill="both", padx=10, pady=10)
+        self.tabControl.add(scrollable_frame, text="Input")
 
-        myscrollbar = Scrollbar(inputFrame, orient="vertical", command=canvas.yview)
-        myscrollbar.pack(side="right", fill="y")
-
-        frame = MyFrame(canvas)
-
-        canvas.create_window((0, 0), window=frame, anchor="nw")
-
-        canvas.configure(yscrollcommand=myscrollbar.set)
-
-        frame.pack()
 
 if __name__ == "__main__":
     #initialize_firebase()

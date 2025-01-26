@@ -8,17 +8,13 @@ from matplotlib import pyplot as plt
 from matplotlib.backends._backend_tk import NavigationToolbar2Tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pygame
+pygame.mixer.init()
 
 
 from Graphs.Main import open_file, graph_distribution, graph_male_female, \
     graph_caffeine_influence_awakenings, graph_smoking_influence_sleep_efficiency, graph_sleep_efficiency_age, \
     graph_exercise_sleep_efficiency
 from User.User import User
-from firebase.firebase import initialize_firebase
-
-
-#from Main.User import User
-#from Main.Main import generate_graphs
 
 
 class MyCheckboxFrame(customtkinter.CTkFrame):
@@ -200,6 +196,13 @@ class MyFrame(customtkinter.CTkFrame):
             self, text="Change Theme",fg_color="#5a65d6", hover_color="#c8cade",text_color="white", command=self.toggle_theme
         )
         toggle_button.pack(pady=8, padx=8)
+        # music because why not
+        music_button=customtkinter.CTkButton(self, text='Music', fg_color="#5a65d6", hover_color="#c8cade",text_color="white", command=self.music)
+        music_button.pack(pady=8, padx=8)
+
+    def music(self):
+        pygame.mixer.music.load('music.mp3')
+        pygame.mixer.music.play(loops=0)
 
     def toggle_theme(self):
         current_theme = customtkinter.get_appearance_mode().lower()

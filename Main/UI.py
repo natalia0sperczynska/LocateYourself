@@ -210,21 +210,43 @@ class MyFrame(customtkinter.CTkFrame):
             customtkinter.set_appearance_mode("dark")
             customtkinter.set_default_color_theme("dark-blue")
 
-    def check_data(self):
-        if self.entryName.get() and self.radiobutton_frame.get():
-            messagebox.showinfo("Success", "Your data has been entered")
-            self.get_data()
-        if not self.entryName.get():
-            messagebox.showerror("Error", "Please enter your name")
-        if not self.radiobutton_frame.get():
-            messagebox.showerror("Error", "Please enter sex")
-        if not self.sliderAge.get():
-            messagebox.showerror("Error", "Please enter age")
-        if not self.checkbox_frame.get() and not self.radiobutton_frame.get() and not self.sliderAge.get():
-            messagebox.showerror("Error", "Please enter your data")
+    def check_data(self,show_success=True):
+        missing_fields = []
+        invalid_fields = []
 
-            user = self.get_data()
-            self.save_to_firebase(user)
+        if not self.entryName.get():
+            missing_fields.append("name")
+        if not self.radiobutton_frame.get():
+            missing_fields.append("sex")
+        if self.sliderAge.get()==0:
+            missing_fields.append("age")
+        if self.sliderSleepHours.get()==0:
+            missing_fields.append("sleep hours")
+        if self.sliderTimeInBed.get()==0:
+            missing_fields.append("time in bed")
+        if not self.entryCaffeine.get():
+            missing_fields.append("caffeine consumption")
+        else:
+            try:
+                int(self.entryCaffeine.get())
+            except ValueError:
+                invalid_fields.append('caffeine consumption')
+
+        if self.sliderSleepHours.get()>self.sliderTimeInBed.get():
+            messagebox.showerror("Error", "Time in bed cannot be smaller than sleep hours")
+            return False
+        elif missing_fields or invalid_fields:
+            error_message = ""
+            if missing_fields:
+                error_message += f"Missing fields: {', '.join(missing_fields)}\n"
+            if invalid_fields:
+                error_message += f"Invalid fields: {', '.join(invalid_fields)}"
+            messagebox.showerror("Error", error_message)
+            return False
+        else:
+            if show_success:
+                messagebox.showinfo("Success", "Your data has been entered successfully!")
+            return True
 
 # nowe zmieione
     def get_data(self):
@@ -257,38 +279,45 @@ class MyFrame(customtkinter.CTkFrame):
         self.sliderWakeUpTimes.clear()
 
     def generate_graphs(self):
-        path_data_sleep_efficiency = "../Data/Sleep_Efficiency.csv"
-        data = open_file(path_data_sleep_efficiency)
-        if data is None:
-            messagebox.showerror("Error", "No data available to generate graphs.")
+        if not self.check_data(show_success=False):
+            messagebox.showinfo("Required data", "To see the graphs, please enter the required data.")
             return
-        self.generatedTabs += 1
-        plotsFrame = customtkinter.CTkFrame(self.tabControl)
-        plotsFrame.pack(expand=True, fill="both")
-        self.tabControl.add(plotsFrame, text=f"Graphs{self.generatedTabs}")
+        path_data_sleep_efficiency = "../Data/Sleep_Efficiency.csv"
+        try:
+            data = open_file(path_data_sleep_efficiency)
+            if data is None:
+                messagebox.showerror("Error", "No data available to generate graphs.")
+                return
+            self.generatedTabs += 1
+            plotsFrame = customtkinter.CTkFrame(self.tabControl)
+            plotsFrame.pack(expand=True, fill="both")
+            self.tabControl.add(plotsFrame, text=f"Graphs{self.generatedTabs}")
 
-        fig, axs = plt.subplots(3,2,figsize=(11, 11))
-        fig.tight_layout(pad=5.0)
+            fig, axs = plt.subplots(3,2,figsize=(11, 11))
+            fig.tight_layout(pad=5.0)
 
-        ax1, ax2= axs[0]
-        ax3, ax4= axs[1]
-        ax5, ax6 = axs[2]
-        user=self.get_data()
+            ax1, ax2= axs[0]
+            ax3, ax4= axs[1]
+            ax5, ax6 = axs[2]
+            user=self.get_data()
 
-        graph_distribution(data, user, ax=ax1)
-        graph_male_female(data,user, ax=ax2)
-        graph_sleep_efficiency_age(data, user,ax=ax3)
-        graph_caffeine_influence_awakenings(data, user,ax=ax4)
-        graph_smoking_influence_sleep_efficiency(data, user,ax=ax5)
-        graph_exercise_sleep_efficiency(data,user,ax=ax6)
+            graph_distribution(data, user, ax=ax1)
+            graph_male_female(data,user, ax=ax2)
+            graph_sleep_efficiency_age(data, user,ax=ax3)
+            graph_caffeine_influence_awakenings(data, user,ax=ax4)
+            graph_smoking_influence_sleep_efficiency(data, user,ax=ax5)
+            graph_exercise_sleep_efficiency(data,user,ax=ax6)
 
-        canvas = FigureCanvasTkAgg(fig, master=plotsFrame)
-        canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+            canvas = FigureCanvasTkAgg(fig, master=plotsFrame)
+            canvas.draw()
+            canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-        toolbar = NavigationToolbar2Tk(canvas, plotsFrame)
-        toolbar.update()
-        toolbar.pack(side=tk.BOTTOM, fill=tk.X)
+            toolbar = NavigationToolbar2Tk(canvas, plotsFrame)
+            toolbar.update()
+            toolbar.pack(side=tk.BOTTOM, fill=tk.X)
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to generate graphs: {e}")
 
     # nowe
     def save_to_firebase(self, user):

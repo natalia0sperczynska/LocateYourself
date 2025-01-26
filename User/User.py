@@ -1,9 +1,9 @@
 
 class User:
-    def __init__(self, name, age, sleep_efficeincy,smoking_status,exercise, coffein_consumption,waking_up_during_night,sex):
+    def __init__(self, name, age, sleep_efficiency, smoking_status, exercise, coffein_consumption, waking_up_during_night, sex):
         self.name = name
         self.age = age
-        self.sleep_efficeincy=sleep_efficeincy
+        self.sleep_efficiency=sleep_efficiency
         self.smoking_status = smoking_status
         self.exercise = exercise
         self.coffein_consumption = coffein_consumption

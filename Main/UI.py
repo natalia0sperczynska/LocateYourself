@@ -7,10 +7,12 @@ from firebase_admin import db
 from matplotlib import pyplot as plt
 from matplotlib.backends._backend_tk import NavigationToolbar2Tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import pygame
 
 
-from Graphs.Main import open_file, distribution, graph_male_female, age_distribution_sleep_efficiency1, \
-    graph_caffeine_influence_awakenings,graph_smoking_influence_sleep_efficiency
+from Graphs.Main import open_file, graph_distribution, graph_male_female, \
+    graph_caffeine_influence_awakenings, graph_smoking_influence_sleep_efficiency, graph_sleep_efficiency_age, \
+    graph_exercise_sleep_efficiency
 from User.User import User
 from firebase.firebase import initialize_firebase
 
@@ -142,7 +144,7 @@ class MyFrame(customtkinter.CTkFrame):
         self.entryName.pack(pady=8, padx=8)
 
         # age
-        self.sliderAge = MySliderFrame(self, "Age", from_=0, to=100)
+        self.sliderAge = MySliderFrame(self, "Age", from_=0, to=80)
         self.sliderAge.pack(pady=8, padx=8)
 
         # smoker status
@@ -231,10 +233,10 @@ class MyFrame(customtkinter.CTkFrame):
             user = User(
                 name=self.entryName.get(),
                 age=int(self.sliderAge.get()),
-                sleep_efficeincy=float(self.sliderSleepHours.get() / self.sliderTimeInBed.get()),
+                sleep_efficiency=float(self.sliderSleepHours.get() / self.sliderTimeInBed.get()),
                 smoking_status=self.checkbox_frame.get(),
                 exercise=int(self.sliderExerciseFrequency.get()),
-                coffein_consumption=int(self.entryCaffeine.get()) if self.entryCaffeine.get() else 0,
+                coffein_consumption=int(self.entryCaffeine.get()),
                 waking_up_during_night=int(self.sliderWakeUpTimes.get()),
                 sex=self.radiobutton_frame.get()
             )
@@ -265,7 +267,7 @@ class MyFrame(customtkinter.CTkFrame):
         plotsFrame.pack(expand=True, fill="both")
         self.tabControl.add(plotsFrame, text=f"Graphs{self.generatedTabs}")
 
-        fig, axs = plt.subplots(3,2,figsize=(12, 10))
+        fig, axs = plt.subplots(3,2,figsize=(11, 11))
         fig.tight_layout(pad=5.0)
 
         ax1, ax2= axs[0]
@@ -273,12 +275,12 @@ class MyFrame(customtkinter.CTkFrame):
         ax5, ax6 = axs[2]
         user=self.get_data()
 
-        distribution(data,user,ax=ax1)
+        graph_distribution(data, user, ax=ax1)
         graph_male_female(data,user, ax=ax2)
-        age_distribution_sleep_efficiency1(data, ax=ax3)
-        graph_caffeine_influence_awakenings(data, ax=ax4)
-        graph_smoking_influence_sleep_efficiency(data, ax=ax5)
-        graph_caffeine_influence_awakenings(data, ax=ax6)
+        graph_sleep_efficiency_age(data, user,ax=ax3)
+        graph_caffeine_influence_awakenings(data, user,ax=ax4)
+        graph_smoking_influence_sleep_efficiency(data, user,ax=ax5)
+        graph_exercise_sleep_efficiency(data,user,ax=ax6)
 
         canvas = FigureCanvasTkAgg(fig, master=plotsFrame)
         canvas.draw()
@@ -296,7 +298,7 @@ class MyFrame(customtkinter.CTkFrame):
             ref.push({
                 "name": user.name,
                 "age": user.age,
-                "sleep_efficiency": user.sleep_efficeincy,
+                "sleep_efficiency": user.sleep_efficiency,
                 "smoking_status": user.smoking_status,
                 "exercise": user.exercise,
                 "caffeine_consumption": user.coffein_consumption,

@@ -135,13 +135,13 @@ def graph_caffeine_influence_awakenings(df: pd.DataFrame,user:User,ax):
     awakening_bins = [0, 2, 5, 10]
     awakening_labels = ['0-2', '3-5', '6+']
     df['Caffeine consumption (Category)'] = pd.cut(df['Caffeine consumption'], bins=caffeine_bins,
-                                                   labels=caffeine_labels, right=False)
-    df['Awakenings (Category)'] = pd.cut(df['Awakenings'], bins=awakening_bins, labels=awakening_labels, right=False)
+                                                   labels=caffeine_labels, right=True)
+    df['Awakenings (Category)'] = pd.cut(df['Awakenings'], bins=awakening_bins, labels=awakening_labels, right=True)
     sns.countplot(x='Caffeine consumption (Category)', hue='Awakenings (Category)', data=df, palette='viridis', ax=ax)
     plt.xlabel('Caffeine Consumption', fontsize=12)
     plt.ylabel('Number of Awakenings', fontsize=12)
-    user_caffeine_category = pd.cut([user.coffein_consumption], bins=caffeine_bins, labels=caffeine_labels, right=False)[0]
-    user_awakening_category = pd.cut([user.waking_up_during_night], bins=awakening_bins, labels=awakening_labels, right=False)[0]
+    user_caffeine_category = pd.cut([user.coffein_consumption], bins=caffeine_bins, labels=caffeine_labels, right=True)[0]
+    user_awakening_category = pd.cut([user.waking_up_during_night], bins=awakening_bins, labels=awakening_labels, right=True)[0]
     with plt.xkcd():
         ax.plot(user_caffeine_category, user_awakening_category, 'or', markersize=10, label='You', zorder=5)
     handles, labels = ax.get_legend_handles_labels()

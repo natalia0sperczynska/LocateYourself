@@ -9,8 +9,6 @@ from matplotlib.backends._backend_tk import NavigationToolbar2Tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pygame
 pygame.mixer.init()
-
-
 from Graphs.Main import open_file, graph_distribution, graph_male_female, \
     graph_caffeine_influence_awakenings, graph_smoking_influence_sleep_efficiency, graph_sleep_efficiency_age, \
     graph_exercise_sleep_efficiency
@@ -18,7 +16,17 @@ from User.User import User
 
 
 class MyCheckboxFrame(customtkinter.CTkFrame):
+    """
+    This is custom frame containing multiple checkboxes
+    """
     def __init__(self, master,title,values):
+        """
+        This function initialize the checkbox frame.
+        Arguments:
+            master (tk.Widget): Parent widget
+            title (str): Title of the frame
+            values (list): List of checkbox labels
+        """
         super().__init__(master)
         self.values = values
         self.title=title
@@ -33,6 +41,12 @@ class MyCheckboxFrame(customtkinter.CTkFrame):
             self.checkboxes.append(checkbox)
 
     def get(self):
+        """
+        This function gets the list of selected checkboxes.
+
+        Returns:
+            list: List of selected checkbox texts.
+        """
         checked_checkboxes = []
         for checkbox in self.checkboxes:
             if checkbox.get() == 1:
@@ -40,11 +54,25 @@ class MyCheckboxFrame(customtkinter.CTkFrame):
         return checked_checkboxes
 
     def clear(self):
+        """
+        This function deselects all checkboxes.
+        """
         for checkbox in self.checkboxes:
             checkbox.deselect()
 
 class MyRadiobuttonFrame(customtkinter.CTkFrame):
+    """
+    This represents custom frame containing multiple radio buttons.
+    """
     def __init__(self, master, title, values):
+        """
+        Function Initialize the radio button frame.
+
+        Arguments:
+            master (tk.Widget): Parent widget.
+            title (str): Title displayed at the top of the frame.
+            values (list): List of values for the radio buttons.
+        """
         super().__init__(master)
         self.grid_columnconfigure(0, weight=1)
         self.values = values
@@ -61,16 +89,44 @@ class MyRadiobuttonFrame(customtkinter.CTkFrame):
             self.radiobuttons.append(radiobutton)
 
     def get(self):
+        """
+        This function gets the list of selected radio buttons values.
+
+        Returns:
+            str: The selected value.
+        """
         return self.variable.get()
 
     def set(self, value):
+        """
+        This function sets the value of the radio button group.
+
+        Arguments:
+            value (str): The selected value.
+        """
         self.variable.set(value)
 
     def clear(self):
+        """
+        This function clear the selected value.
+        """
         self.variable.set("")
 
 class MySliderFrame(customtkinter.CTkFrame):
+    """
+    This is custom frame containing a slider with a little value display.
+    """
     def __init__(self, master, title, from_, to, steps=None):
+        """
+        Function initialize the slider frame.
+        
+        Arguments:
+            master (tk.Widget): Parent widget.
+            title (str): Title displayed above the slider.
+            from_ (float): Minimum value of the slider.
+            to (float): Maximum value of the slider.
+            steps (int, optional): Number of steps on the slider.
+        """
         super().__init__(master)
         self.title = title
 
@@ -86,21 +142,53 @@ class MySliderFrame(customtkinter.CTkFrame):
         self.slider.pack(pady=8, padx=8)
 
     def update_label(self, value):
+        """
+        This function updates the value of the slider.
+        
+        Arguments:
+            value (str): Current slider value.
+        """
         self.value_label.configure(text=f"{int(value)}")
 
     def get(self):
+        """
+        Function gets current value of the slider.
+        
+        Returns:
+            float: Current value of the slider.
+        """
         return self.slider.get()
 
     def set(self, value):
+        """
+        This function sets the value of the slider.
+        
+        Arguments:
+            value (float): Value to set
+        """
         self.slider.set(value)
         self.update_label(value)
 
     def clear(self):
+        """
+        FUnction resets the slider to its default position.
+        """
         self.slider.set(0)
         self.value_label.configure(text="0")
 
 class VerticalScrolledFrame(ttk.Frame):
+    """
+    This is frame with vertical scrollbar.
+    """
     def __init__(self, parent, *args, **kw):
+        """
+        FUnction initialize the vertically scrollable frame.
+        
+        Arguments:
+            parent: Parent widget.
+            *args: Additional arguments.
+            **kwargs: Additional keyword arguments.
+        """
         ttk.Frame.__init__(self, parent, *args, **kw)
 
         vscrollbar = ttk.Scrollbar(self, orient=tk.VERTICAL)
@@ -119,17 +207,40 @@ class VerticalScrolledFrame(ttk.Frame):
         self.canvas.bind('<Configure>', self._configure_canvas)
 
     def _configure_interior(self, event):
+        """
+        Function adjusts the scroll region when the interior is realized.
+
+        Arguments:
+            event: The event object.
+        """
         size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
         self.canvas.config(scrollregion=(0, 0, size[0], size[1]))
         if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
             self.canvas.config(width=self.interior.winfo_reqwidth())
 
     def _configure_canvas(self, event):
+        """
+        Function adjusts the interior width to match the canvas width.
+
+        Arguments:
+             event: The event object.
+        """
+
         if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
             self.canvas.itemconfigure(self.interior_id, width=self.canvas.winfo_width())
 
 class MyFrame(customtkinter.CTkFrame):
+    """
+    Custom frame that gathers user input for various health and lifestyle parameters.
+    """
     def __init__(self, root, tabControl):
+        """
+        Function initializes the frame and creates all input widgets.
+
+        Arguments:
+            root (customtkinter.CTk): Parent widget.
+            tabControl (ttk.Notebook): The notebook widget to manage tabs.
+        """
         super().__init__(root)
         self.root = root
         self.generatedTabs = 0
@@ -201,10 +312,16 @@ class MyFrame(customtkinter.CTkFrame):
         music_button.pack(pady=8, padx=8)
 
     def music(self):
+        """
+        Function lets play a music file using pygame.
+        """
         pygame.mixer.music.load('music.mp3')
         pygame.mixer.music.play(loops=0)
 
     def toggle_theme(self):
+        """
+        Function toggles the application's appearance mode between light and dark themes.
+        """
         current_theme = customtkinter.get_appearance_mode().lower()
         if current_theme == "dark":
             customtkinter.set_appearance_mode("light")
@@ -214,6 +331,14 @@ class MyFrame(customtkinter.CTkFrame):
             customtkinter.set_default_color_theme("dark-blue")
 
     def check_data(self,show_success=True):
+        """
+        Function validates the user input data and displays appropriate messages.
+
+        Arguments:
+            show_success (bool): Whether to show a success message on valid input.
+        Returns:
+            bool: True if data is valid, False otherwise.
+        """
         missing_fields = []
         invalid_fields = []
 
@@ -251,9 +376,13 @@ class MyFrame(customtkinter.CTkFrame):
                 messagebox.showinfo("Success", "Your data has been entered successfully!")
             return True
 
-# nowe zmieione
     def get_data(self):
-        """Collect user input into a User object."""
+        """
+        Function collects and structures user input data into User object.
+
+        Returns:
+            User: An object containing the user's input data, or None if invalid.
+        """
         try:
             user = User(
                 name=self.entryName.get(),
@@ -271,6 +400,9 @@ class MyFrame(customtkinter.CTkFrame):
             return None
 
     def clear(self):
+        """
+        Function clears all input fields and resets widgets to their default states.
+        """
         self.entryName.delete(0, "end")
         self.checkbox_frame.clear()
         self.radiobutton_frame.clear()
@@ -282,6 +414,9 @@ class MyFrame(customtkinter.CTkFrame):
         self.sliderWakeUpTimes.clear()
 
     def generate_graphs(self):
+        """
+        Function validates input data and generates graphs based on user input and loaded data.
+        """
         if not self.check_data(show_success=False):
             messagebox.showinfo("Required data", "To see the graphs, please enter the required data.")
             return
@@ -322,9 +457,13 @@ class MyFrame(customtkinter.CTkFrame):
         except Exception as e:
             messagebox.showerror("Error", f"Failed to generate graphs: {e}")
 
-    # nowe
     def save_to_firebase(self, user):
+        """
+        Function saves user's data to Firebase database.'
 
+        Arguments:
+            user (User): The user data to be saved.
+        """
         try:
             ref = db.reference("/users")
             ref.push({
@@ -341,7 +480,14 @@ class MyFrame(customtkinter.CTkFrame):
             messagebox.showerror("Error", f"Failed to save data to Firebase: {e}")
 
 class App(customtkinter.CTk):
+    """
+    Main application class for creating and managing the tkinter GUI.
+    """
     def __init__(self):
+
+        """
+        Function initializes the application window, layout and tabs.
+        """
         super().__init__()
         self.geometry("800x1000")
         self.title("LocateYourself")

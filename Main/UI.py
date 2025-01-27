@@ -1,6 +1,5 @@
 import tkinter as tk
-from tkinter import IntVar, mainloop, W, StringVar, Toplevel, PhotoImage, ttk
-from tkinter.ttk import Scrollbar, Frame, Notebook
+from tkinter import PhotoImage, ttk
 import customtkinter
 from tkinter import messagebox
 from firebase_admin import db
@@ -9,7 +8,7 @@ from matplotlib.backends._backend_tk import NavigationToolbar2Tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pygame
 pygame.mixer.init()
-from Graphs.Main import open_file, graph_distribution, graph_male_female, \
+from Graphs.Graph import open_file, graph_distribution, graph_male_female, \
     graph_caffeine_influence_awakenings, graph_smoking_influence_sleep_efficiency, graph_sleep_efficiency_age, \
     graph_exercise_sleep_efficiency
 from User.User import User
@@ -422,7 +421,8 @@ class MyFrame(customtkinter.CTkFrame):
             return
         path_data_sleep_efficiency = "../Data/Sleep_Efficiency.csv"
         try:
-            data = open_file(path_data_sleep_efficiency)
+            data=open_file(path_data_sleep_efficiency)
+            data=data.dropna()
             if data is None:
                 messagebox.showerror("Error", "No data available to generate graphs.")
                 return

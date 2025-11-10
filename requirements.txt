@@ -1,0 +1,6 @@
+customtkinter~=5.2.2
+pygame~=2.6.1
+firebase_admin~=7.1.0
+matplotlib~=3.10.7
+pandas~=2.3.3
+seaborn~=0.13.2
